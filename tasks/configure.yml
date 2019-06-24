@@ -1,0 +1,21 @@
+---
+- name: Disable modules
+  apache2_module:
+    name: '{{ item }}'
+    state: disabled
+  with_items: '{{ apache_disable_modules }}'
+  notify: Restart Apache
+
+- name: Enable modules
+  apache2_module:
+    name: '{{ item }}'
+  with_items: '{{ apache_enable_modules }}'
+  notify: Restart Apache
+
+- name: Create vhosts
+  template:
+    src: vhost.conf.j2
+    dest: '/etc/apache2/sites-enabled/{{ item.name }}.conf'
+  with_items: '{{ apache_vhosts }}'
+  notify: Reload Apache
+  when: apache_vhosts is defined
