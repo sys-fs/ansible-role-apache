@@ -1,4 +1,8 @@
 ---
+- name: Configure ports
+
+- name: Configure Apache
+
 - name: Disable modules
   apache2_module:
     name: '{{ item }}'
@@ -15,7 +19,15 @@
 - name: Create vhosts
   template:
     src: vhost.conf.j2
+    dest: '/etc/apache2/sites-available/{{ item.name }}.conf'
+  with_items: '{{ apache_vhosts }}'
+  when: apache_vhosts is defined
+
+- name: Enable vhosts
+  file:
+    src: '/etc/apache2/sites-available/{{ item.name }}.conf'
     dest: '/etc/apache2/sites-enabled/{{ item.name }}.conf'
+    state: link
   with_items: '{{ apache_vhosts }}'
   notify: Reload Apache
   when: apache_vhosts is defined
