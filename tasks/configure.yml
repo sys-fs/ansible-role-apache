@@ -1,7 +1,23 @@
 ---
 - name: Configure ports
+  template:
+    src: ports.conf.j2
+    dest: /etc/apache2/ports.conf
+  notify: Restart Apache
 
 - name: Configure Apache
+  template:
+    src: apache.conf.j2
+    dest: /etc/apache2/conf-available/apache.conf
+  when: apache_global_directives
+
+- name: Enable Apache configuration
+  file:
+    src: /etc/apache2/conf-available/apache.conf
+    dest: /etc/apache2/conf-enabled/apache.conf
+    state: link
+  when: apache_global_directives
+  notify: Restart Apache
 
 - name: Disable modules
   apache2_module:
@@ -16,18 +32,27 @@
   with_items: '{{ apache_enable_modules }}'
   notify: Restart Apache
 
-- name: Create vhosts
+- name: Create HTTP vhosts
   template:
-    src: vhost.conf.j2
-    dest: '/etc/apache2/sites-available/{{ item.name }}.conf'
-  with_items: '{{ apache_vhosts }}'
-  when: apache_vhosts is defined
+    src: http-vhost.conf.j2
+    dest: '/etc/apache2/sites-available/{{ item.server_name }}.conf'
+  with_items: '{{ apache_http_vhosts }}'
+  when: apache_http_vhosts is defined
+
+- name: Create HTTPS vhosts
+  template:
+    src: https-vhost.conf.j2
+    dest: '/etc/apache2/sites-available/{{ item.server_name }}.conf'
+  with_items: '{{ apache_https_vhosts }}'
+  when: apache_https_vhosts is defined
 
 - name: Enable vhosts
   file:
-    src: '/etc/apache2/sites-available/{{ item.name }}.conf'
-    dest: '/etc/apache2/sites-enabled/{{ item.name }}.conf'
+    src: '/etc/apache2/sites-available/{{ item.server_name }}.conf'
+    dest: '/etc/apache2/sites-enabled/{{ item.server_name }}.conf'
     state: link
-  with_items: '{{ apache_vhosts }}'
+  with_items:
+    - '{{ apache_http_vhosts }}'
+    - '{{ apache_https_vhosts }}'
   notify: Reload Apache
-  when: apache_vhosts is defined
+  when: apache_http_vhosts is defined or apache_https_vhosts is defined
