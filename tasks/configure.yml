@@ -22,7 +22,7 @@
 - name: Disable modules
   apache2_module:
     name: '{{ item }}'
-    state: disabled
+    state: absent
   with_items: '{{ apache_disable_modules }}'
   notify: Restart Apache
 
