@@ -1,6 +1,7 @@
 ---
 galaxy_info:
   author: Thomas Mannay
+  role_name: apache
   description: Install and configure Apache 2.x on Debian and Ubuntu.
 
   license: MIT
