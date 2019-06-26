@@ -1,48 +1,50 @@
 sys_fs.apache
 =============
 
-<!-- A brief description of the role goes here. -->
+This role installs and configures Apache 2.x from the sury.org repo on Debian
+and Ubuntu. The sury.org repo is not used on Debian 8 hosts, as it is
+unsupported.
 
-<!-- Requirements -->
-<!-- ------------ -->
+Requirements
+------------
 
-<!-- Any pre-requisites that may not be covered by Ansible itself or the role should -->
-<!-- be mentioned here. For instance, if the role uses the EC2 module, it may be a -->
-<!-- good idea to mention in this section that the boto package is required. -->
+This role requires at least Ansible 2.6. Earlier releases may work, but are not supported.
 
-<!-- Role Variables -->
-<!-- -------------- -->
+Role Variables
+--------------
 
-<!-- A description of the settable variables for this role should go here, including -->
-<!-- any variables that are in defaults/main.yml, vars/main.yml, and any variables -->
-<!-- that can/should be set via parameters to the role. Any variables that are read -->
-<!-- from other roles and/or the global scope (ie. hostvars, group vars, etc.) should -->
-<!-- be mentioned here as well. -->
+	apache_http_port: 80
+	apache_https_port: 443
 
-<!-- Dependencies -->
-<!-- ------------ -->
+Ports to listen on.
 
-<!-- A list of other roles hosted on Galaxy should go here, plus any details in -->
-<!-- regards to parameters that may need to be set for other roles, or variables that -->
-<!-- are used from other roles. -->
+	apache_disable_modules: []
 
-<!-- Example Playbook -->
-<!-- ---------------- -->
+List of modules to disable, as passed to a2dismod.
 
-<!-- Including an example of how to use your role (for instance, with variables -->
-<!-- passed in as parameters) is always nice for users too: -->
+	apache_enable_modules: []
 
-<!--     - hosts: servers -->
-<!--       roles: -->
-<!--          - { role: ansible-role-apache, x: 42 } -->
+List of modules to enable, as passed to a2enmod.
 
-<!-- License -->
-<!-- ------- -->
+	apache_http_vhosts:
+	  - server_name: example.com
+	apache_https_vhosts: []
 
-<!-- BSD -->
+Vhosts to create. TODO document once template is finished.
 
-<!-- Author Information -->
-<!-- ------------------ -->
+Example Playbook
+----------------
 
-<!-- An optional section for the role authors to include contact information, or a -->
-<!-- website (HTML is not allowed). -->
+    - hosts: web
+	  vars:
+	    - apache_disable_modules:
+		    - mpm_prefork
+	    - apache_enable_modules:
+		    - mpm_event
+      roles:
+        - sys_fs.apache
+
+License
+-------
+
+MIT
