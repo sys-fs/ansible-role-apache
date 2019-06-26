@@ -35,21 +35,21 @@
 - name: Create HTTP vhosts
   template:
     src: http-vhost.conf.j2
-    dest: '/etc/apache2/sites-available/{{ item.server_name }}.{{ apache_http_port}}.conf'
+    dest: '/etc/apache2/sites-available/{{ item.server_name }}.{{ apache_http_port }}.conf'
   with_items: '{{ apache_http_vhosts }}'
   when: apache_http_vhosts is defined
 
 - name: Create HTTPS vhosts
   template:
     src: https-vhost.conf.j2
-    dest: '/etc/apache2/sites-available/{{ item.server_name }}.{{ apache_https_port}}.conf'
+    dest: '/etc/apache2/sites-available/{{ item.server_name }}.{{ apache_https_port }}.conf'
   with_items: '{{ apache_https_vhosts }}'
   when: apache_https_vhosts is defined
 
 - name: Enable HTTP vhosts
   file:
-    src: '/etc/apache2/sites-available/{{ item.server_name }}.{{ apache_http_port}}.conf'
-    dest: '/etc/apache2/sites-enabled/{{ item.server_name }}.{{ apache_http_port}}.conf'
+    src: '/etc/apache2/sites-available/{{ item.server_name }}.{{ apache_http_port }}.conf'
+    dest: '/etc/apache2/sites-enabled/{{ item.server_name }}.{{ apache_http_port }}.conf'
     state: link
   with_items:
     - '{{ apache_http_vhosts }}'
@@ -58,8 +58,8 @@
 
 - name: Enable HTTPS vhosts
   file:
-    src: '/etc/apache2/sites-available/{{ item.server_name }}.{{ apache_https_port}}.conf'
-    dest: '/etc/apache2/sites-enabled/{{ item.server_name }}.{{ apache_https_port}}.conf'
+    src: '/etc/apache2/sites-available/{{ item.server_name }}.{{ apache_https_port }}.conf'
+    dest: '/etc/apache2/sites-enabled/{{ item.server_name }}.{{ apache_https_port }}.conf'
     state: link
   with_items:
     - '{{ apache_https_vhosts }}'
