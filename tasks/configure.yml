@@ -37,6 +37,7 @@
     src: http-vhost.conf.j2
     dest: '/etc/apache2/sites-available/{{ item.server_name }}.{{ apache_http_port }}.conf'
   with_items: '{{ apache_http_vhosts }}'
+  notify: Reload Apache
   when: apache_http_vhosts is defined
 
 - name: Create HTTPS vhosts
@@ -44,6 +45,7 @@
     src: https-vhost.conf.j2
     dest: '/etc/apache2/sites-available/{{ item.server_name }}.{{ apache_https_port }}.conf'
   with_items: '{{ apache_https_vhosts }}'
+  notify: Reload Apache
   when: apache_https_vhosts is defined
 
 - name: Enable HTTP vhosts
